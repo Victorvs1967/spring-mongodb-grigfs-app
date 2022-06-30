@@ -7,10 +7,6 @@ const uploadForm = document.getElementById('fileUploadForm'),
 const uploadUrl = `http://localhost:${process.env.PORT}/api/files/upload`;
 const downloadUrl = `http://localhost:${process.env.PORT}/api/files/download/`;
 
-// for docker container
-// const uploadUrl = 'http://localhost:8888/api/files/upload';
-// const downloadUrl = 'http://localhost:8888/api/files/download/';
-
 const uploadFile = file => {
   let formData = new FormData();
   formData.append('file', file);
