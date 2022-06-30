@@ -1,9 +1,15 @@
+require('dotenv').config();
+
 const uploadForm = document.getElementById('fileUploadForm'),
       uploadFormInput = document.getElementById('fileUploadInput'),
       downloadFile = document.getElementById('downloadFileUrl');
 
-const uploadUrl = 'http://localhost:8080/api/files/upload';
-const downloadUrl = 'http://localhost:8080/api/files/download/';
+const uploadUrl = `http://localhost:${process.env.PORT}/api/files/upload`;
+const downloadUrl = `http://localhost:${process.env.PORT}/api/files/download/`;
+
+// for docker container
+// const uploadUrl = 'http://localhost:8888/api/files/upload';
+// const downloadUrl = 'http://localhost:8888/api/files/download/';
 
 const uploadFile = file => {
   let formData = new FormData();

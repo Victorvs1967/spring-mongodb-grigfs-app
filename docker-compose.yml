@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+
+  mongodb:
+    container_name: mongodb_container
+    image: "mongo:4.4.7"
+    hostname: mongo_host
+    environment:
+      MONGO_INIT_DATABASE: mongo_db
+    volumes:
+      - mongo_data:/data/db
+    ports: 
+      - 27017:27017
+    networks:
+      - backend
+
+  backend_app:
+    container_name: backend_container
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    environment:
+      MONGO_HOST: mongodb
+      PORT: 8888
+    ports:
+      - 8888:8080
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: false
+    name: backend
+
+volumes:
+  mongo_data:
