@@ -26,6 +26,7 @@ public class FileServiceImpl implements FileService {
   @Autowired
   private ReactiveGridFsTemplate gridFsTemplate;
 
+  @Override
   public Mono<Map<String, String>> addFile(MultiValueMap<String, Part> upload) {
     DBObject metadata = new BasicDBObject();
     metadata.put("fileSize", upload.size());
@@ -39,12 +40,14 @@ public class FileServiceImpl implements FileService {
       .map(_id -> _id);
   }
 
+  @Override
   public Mono<?> downloadFile(String id) {
     return gridFsTemplate.findOne(query(where("_id").is(id)))
         .flatMap(gridFsTemplate::getResource)
         .map(res -> res.getContent());
   }
 
+  @Override
   public Mono<Void> delete(String id) {
     return gridFsTemplate.delete(query(where("_id").is(id)));
   }
