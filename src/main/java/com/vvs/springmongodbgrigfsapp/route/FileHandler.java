@@ -45,10 +45,9 @@ public class FileHandler {
   }
 
   public Mono<ServerResponse> delete(ServerRequest request) {
-    String id = request.pathVariable("id");
     return ServerResponse
         .ok()
         .contentType(MediaType.APPLICATION_JSON)
-        .body(fileService.delete(id), Void.class);
+        .body(fileService.delete(request.pathVariable("id")), Void.class);
   }
 }
