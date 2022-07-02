@@ -13,11 +13,11 @@ public class FileRoute {
   @Bean
   public RouterFunction<ServerResponse> fileRouterFunction(FileHandler fileHandler) {
     return RouterFunctions.route()
-      .nest(RequestPredicates.path("/api/files/"), builder -> builder
-        .POST("upload", fileHandler::upload)
-        .GET("{id}", fileHandler::download)
+      .nest(RequestPredicates.path("/api/files"), builder -> builder
+        .POST("/upload", fileHandler::upload)
+        .GET("/{id}", fileHandler::download)
         .GET("", fileHandler::listFiles)
-        .DELETE("{id}", fileHandler::delete))
+        .DELETE("/{id}", fileHandler::delete))
       .build();
   }
 }

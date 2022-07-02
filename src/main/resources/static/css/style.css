@@ -81,6 +81,7 @@ input[type="file"] {
   margin: 0;
   padding: 1rem;
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   list-style-type: none;
 }
