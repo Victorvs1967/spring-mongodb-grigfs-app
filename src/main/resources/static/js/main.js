@@ -1,36 +1,38 @@
-require('dotenv').config();
-
+const PORT = '8080';
 const uploadForm = document.getElementById('fileUploadForm'),
       uploadFormInput = document.getElementById('fileUploadInput'),
-      downloadFile = document.getElementById('downloadFileUrl');
-
-const uploadUrl = `http://localhost:${process.env.PORT}/api/files/upload`;
-const downloadUrl = `http://localhost:${process.env.PORT}/api/files/download/`;
+      downloadFileUrl = document.getElementById('downloadFileUrl'),
+      listBtn = document.getElementById('listBtn'),
+      listItems = document.querySelector('.list-wrapper'),
+      apiUrl = `http://localhost:${PORT}/api/files/`;
 
 const uploadFile = file => {
   let formData = new FormData();
   formData.append('file', file);
-
-  fetch(uploadUrl, {
+  fetch(apiUrl.concat('upload'), {
     method: 'POST',
     body: formData,
-  }).then(response => response.json())
-    .then(data => {
-      console.log(data);
-      console.log(data.id);
-      let response = data.id;
-
-      if (response !== null) {
-        const dwnldUrl = downloadUrl.concat(response);
-        downloadFile.innerHTML = '<p>File Uploaded Successfullly. <br/> <a href="'.concat(dwnldUrl).concat('" target="_self">Download File</p>');
-        downloadFile.style.display = 'block';
-      } else {
-        alert('Error Occured! No file returned');
-      }
-    });
+  })
+  .then(response => response.json())
+  .then(data => {
+    let response = data.id;
+    if (response !== null) {
+      downloadFileUrl.innerHTML = `
+        <p>
+          File Uploaded Successfullly. <br/>
+          <a href="${apiUrl.concat(response)}" target="_blank">
+            Download File
+          </a>
+        </p>
+      `;
+      downloadFileUrl.style.display = 'block';
+    } else {
+      alert('Error Occured! No file returned');
+    }
+  });
 };
 
-uploadForm.addEventListener('submit', event => {
+const downloadFile = event => {
   const files = uploadFormInput.files;
   if (files.length !== 0) {
     uploadFile(files[0]);
@@ -38,4 +40,44 @@ uploadForm.addEventListener('submit', event => {
   } else {
     alert('Please Select a File');
   }
-}, true);
+};
+
+const listFiles = () => {
+  listItems.innerHTML = '';
+  fetch(apiUrl)
+    .then(data => data.json())
+    .then(items => items.forEach(item => {
+      const filename = Object.values(item)[0];
+      const id = Object.keys(item)[0];
+      const linkImg = apiUrl.concat(id);
+      listItems.insertAdjacentHTML('beforeend', `
+        <li>
+          <a href="${linkImg}" target="_blank">
+            <img src="${linkImg}" />
+          </a>
+          <div class="img-footer">
+            <a href="${linkImg}" target="_blank">${filename}</a>
+            <span class="delete-link" id="${id}">delete</span>
+          </div>
+        </li>
+      `);
+      document.getElementById(id).addEventListener('click', () => deleteFile(id));
+    })
+  );
+};
+
+const deleteFile = id => {
+  fetch(apiUrl.concat(id), {
+    method: 'DELETE',
+  }).then(res => {
+      if (id !== null) {
+        alert('Deleted file with ID: '.concat(id));
+        listFiles();
+      } else {
+        alert('Error Occured! No file deleted');
+      }
+    });
+};
+
+uploadForm.addEventListener('submit', event => downloadFile(event), true);
+listBtn.addEventListener('click', () => listFiles());

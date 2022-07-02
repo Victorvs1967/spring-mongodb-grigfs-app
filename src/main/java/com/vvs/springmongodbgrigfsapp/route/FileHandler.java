@@ -1,5 +1,6 @@
 package com.vvs.springmongodbgrigfsapp.route;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyExtractors;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -34,5 +36,20 @@ public class FileHandler {
         .ok()
         .contentType(MediaType.IMAGE_JPEG)
         .body(file, DataBuffer.class));
+  }
+
+  public Mono<ServerResponse> listFiles(ServerRequest request) {
+    return ServerResponse
+      .ok()
+      .contentType(MediaType.APPLICATION_JSON)
+      .body(fileService.listFiles(), ArrayList.class);
+  }
+
+  public Mono<ServerResponse> delete(ServerRequest request) {
+    String id = request.pathVariable("id");
+    return ServerResponse
+        .ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(fileService.delete(id), Void.class);
   }
 }

@@ -1,6 +1,7 @@
 package com.vvs.springmongodbgrigfsapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.ReactiveGridFsTemplate;
 import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.http.codec.multipart.Part;
@@ -10,6 +11,7 @@ import org.springframework.util.MultiValueMap;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.springframework.data.mongodb.core.query.Query.query;
@@ -42,4 +44,15 @@ public class FileServiceImpl implements FileService {
         .flatMap(gridFsTemplate::getResource)
         .map(res -> res.getContent());
   }
+
+  public Mono<Void> delete(String id) {
+    return gridFsTemplate.delete(query(where("_id").is(id)));
+  }
+
+	@Override
+	public Flux<Map<String, String>> listFiles() {
+		return gridFsTemplate.find(new Query())
+      .map(file -> Map.of(file.getObjectId().toHexString(), file.getFilename()));
+	}
+
 }
