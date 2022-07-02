@@ -46,9 +46,8 @@ const listFiles = () => {
   listItems.innerHTML = '';
   fetch(apiUrl)
     .then(data => data.json())
-    .then(items => items.forEach(item => {
-      const filename = Object.values(item)[0];
-      const id = Object.keys(item)[0];
+    .then(items => items.forEach(item => Object.entries(item).forEach( ([ id, filename ]) => {
+      console.log(`${id} --> ${filename}`);
       const linkImg = apiUrl.concat(id);
       listItems.insertAdjacentHTML('beforeend', `
         <li>
@@ -62,7 +61,7 @@ const listFiles = () => {
         </li>
       `);
       document.getElementById(id).addEventListener('click', () => deleteFile(id));
-    })
+    }))
   );
 };
 
