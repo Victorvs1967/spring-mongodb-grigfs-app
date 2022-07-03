@@ -47,7 +47,6 @@ const listFiles = () => {
   fetch(apiUrl)
     .then(data => data.json())
     .then(items => items.forEach(item => Object.entries(item).forEach( ([ id, filename ]) => {
-      console.log(`${id} --> ${filename}`);
       const linkImg = apiUrl.concat(id);
       listItems.insertAdjacentHTML('beforeend', `
         <li>
